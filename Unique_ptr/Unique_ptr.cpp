@@ -75,10 +75,14 @@ public:
     Unique_ptr(const Unique_ptr&) = delete;
     Unique_ptr& operator=(const Unique_ptr&) = delete;
 
-    Unique_ptr(Unique_ptr&& other) noexcept : m_value(other.m_value) {    }
+    Unique_ptr(Unique_ptr&& other) noexcept : m_value(other.m_value), m_deleter(other.m_deleter)
+    {
+        other.m_value = nullptr;
+    }
     Unique_ptr& operator=(Unique_ptr&& other) {
         delete m_value;
         m_value = other.m_value;
+        m_deleter = other.m_deleter;
         other.m_value = nullptr;
         return *this;
     }
@@ -137,8 +141,4 @@ Unique_ptr<T> make_unique(TS&&... params) {
 
 int main()
 {
-    Unique_ptr<int> c = new int(1);
-    //Unique_ptr<int> c1(std::move(c));
-    Unique_ptr<int> c3 = std::move(c);
-    //std::cout << *c << "  " << *c3;
 }
